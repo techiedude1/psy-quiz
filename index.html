@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Psychiatry Quiz - Set B</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #eef4f8;
+      color: #333;
+      margin: 0;
+      padding: 0 1rem;
+    }
+    .quiz-container {
+      max-width: 900px;
+      margin: 3rem auto;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      text-align: center;
+      color: #1a5276;
+    }
+    .question {
+      margin-bottom: 1.5rem;
+    }
+    .question h3 {
+      color: #2c3e50;
+    }
+    .options label {
+      display: block;
+      padding: 0.3rem;
+      cursor: pointer;
+    }
+    button {
+      background-color: #2980b9;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .results {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #dff0f8;
+      border-radius: 8px;
+    }
+    .correct {
+      color: green;
+    }
+    .incorrect {
+      color: red;
+    }
+    #password-section {
+      text-align: center;
+      margin-top: 5rem;
+    }
+    #quiz-section {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="password-section">
+    <h1>Enter Quiz Password</h1>
+    <input type="password" id="quiz-password" placeholder="Enter password" />
+    <button onclick="checkPassword()">Enter</button>
+    <p id="password-error" style="color: red; display: none;">Incorrect password. Please try again.</p>
+  </div>
+
+  <div class="quiz-container" id="quiz-section">
+    <h2>Psychiatry NAPLEX Quiz - Version B</h2>
+    <form id="quiz-form"></form>
+    <button type="button" onclick="submitQuiz()">Submit Quiz</button>
+    <div class="results" id="results"></div>
+  </div>
+
+  <script>
+    const PASSWORD = "pharm2025";
+    function checkPassword() {
+      const input = document.getElementById("quiz-password").value;
+      if (input === PASSWORD) {
+        document.getElementById("password-section").style.display = "none";
+        document.getElementById("quiz-section").style.display = "block";
+        loadQuiz();
+      } else {
+        document.getElementById("password-error").style.display = "block";
+      }
+    }
+
+    const quizData = [
+{
+  question: "Which medication is most commonly associated with increased risk of metabolic acidosis via renal bicarbonate wasting?",
+  options: ["Tegretol", "Lamictal", "Topamax", "Keppra"],
+  answer: 2,
+  rationale: "Topiramate causes bicarbonate loss through the kidneys, leading to metabolic acidosis."
+},
+{
+  question: "Which antidepressant has the strongest potential to cause withdrawal symptoms if abruptly discontinued?",
+  options: ["Paroxetine", "Wellbutrin", "Sertraline", "Escitalopram"],
+  answer: 0,
+  rationale: "Paroxetine has a short half-life, leading to withdrawal symptoms."
+},
+{
+  question: "Which of the following is least likely to be associated with sedation?",
+  options: ["Mirtazapine", "Trazodone", "Fluoxetine", "Quetiapine"],
+  answer: 2,
+  rationale: "Fluoxetine is activating rather than sedating."
+},
+{
+  question: "Which antipsychotic is considered weight-neutral?",
+  options: ["Risperidone", "Ziprasidone", "Olanzapine", "Quetiapine"],
+  answer: 1,
+  rationale: "Ziprasidone is generally weight-neutral."
+},
+{
+  question: "Which anticonvulsant requires HLA-B*1502 screening?",
+  options: ["Carbamazepine", "Lamotrigine", "Valproate", "Oxcarbazepine"],
+  answer: 0,
+  rationale: "Carbamazepine requires HLA-B*1502 testing in Asian patients."
+},
+{
+  question: "True or False: SGAs are preferred over FGAs in children due to fewer EPS.",
+  options: ["True", "False"],
+  answer: 0,
+  rationale: "Second-generation antipsychotics have a lower EPS risk."
+},
+{
+  question: "Match the syndrome: EPS is associated with?",
+  options: ["Shuffling gait, rigidity", "Diaphoresis, tremor", "Facial grimacing", "Confusion"],
+  answer: 0,
+  rationale: "EPS presents with shuffling gait, dystonia, rigidity."
+},
+{
+  question: "Common fluoxetine side effect in children?",
+  options: ["Nausea", "Weight gain", "Insomnia", "Fatigue"],
+  answer: 2,
+  rationale: "Fluoxetine can cause insomnia in children."
+},
+{
+  question: "Which drug is least effective in alleviating EPS?",
+  options: ["Aripiprazole", "Benztropine", "Amantadine", "Diphenhydramine"],
+  answer: 0,
+  rationale: "Aripiprazole may worsen EPS."
+},
+{
+  question: "Which drug causes dry mouth via anticholinergic effects?",
+  options: ["Benztropine", "Trazodone", "Lithium", "Ziprasidone"],
+  answer: 0,
+  rationale: "Benztropine has strong anticholinergic side effects."
+},
+{
+  question: "True or False: Dehydration increases lithium toxicity risk.",
+  options: ["True", "False"],
+  answer: 0,
+  rationale: "Dehydration reduces lithium clearance."
+},
+{
+  question: "Which medication should be withheld in bradycardia?",
+  options: ["Risperidone", "Clonidine", "Quetiapine", "Haloperidol"],
+  answer: 1,
+  rationale: "Clonidine can dangerously lower HR and BP."
+},
+{
+  question: "Antipsychotic with highest QT prolongation risk?",
+  options: ["Ziprasidone", "Aripiprazole", "Quetiapine", "Olanzapine"],
+  answer: 0,
+  rationale: "Ziprasidone prolongs QTc and requires food for absorption."
+},
+{
+  question: "True or False: Lamotrigine must be titrated slowly.",
+  options: ["True", "False"],
+  answer: 0,
+  rationale: "Slow titration reduces risk of SJS with lamotrigine."
+},
+{
+  question: "Signs of phenytoin toxicity?",
+  options: ["Lithium toxicity", "Lamotrigine overdose", "Phenytoin toxicity", "Opioid withdrawal"],
+  answer: 2,
+  rationale: "Nystagmus and ataxia indicate phenytoin toxicity."
+},
+{
+  question: "Methylphenidate monitoring focuses on:",
+  options: ["LFTs", "Renal clearance", "Appetite and growth", "WBC count"],
+  answer: 2,
+  rationale: "Methylphenidate can stunt growth."
+},
+{
+  question: "What is a risk of anticholinergic use for EPS?",
+  options: ["Only treats dystonia", "Worsens cognition in elderly", "Prophylactic use recommended", "No role in akathisia"],
+  answer: 1,
+  rationale: "Anticholinergics worsen cognition, especially in elderly."
+},
+{
+  question: "True or False: Methylphenidate is best taken at bedtime.",
+  options: ["True", "False"],
+  answer: 1,
+  rationale: "Methylphenidate should be taken in the morning to avoid insomnia."
+},
+{
+  question: "Cogentin is used to treat:",
+  options: ["Depression", "Bipolar", "ADHD", "EPS"],
+  answer: 3,
+  rationale: "Cogentin treats extrapyramidal symptoms (EPS)."
+},
+{
+  question: "All contraindications to bupropion EXCEPT:",
+  options: ["Bulimia", "ADHD", "Seizure disorder", "Anorexia"],
+  answer: 1,
+  rationale: "Bupropion is contraindicated in seizures and eating disorders, but sometimes used for ADHD."
+},
+{
+  question: "Which causes serotonin syndrome?",
+  options: ["Ibuprofen", "Tramadol", "Metformin", "Haloperidol"],
+  answer: 1,
+  rationale: "Tramadol increases serotonin levels."
+},
+{
+  question: "Which drug needs LFT monitoring?",
+  options: ["Carbamazepine", "Valproate", "Oxcarbazepine", "Lamotrigine"],
+  answer: 1,
+  rationale: "Valproate can cause hepatotoxicity."
+},
+{
+  question: "True or False: Amantadine is second-line for drug-induced Parkinsonism.",
+  options: ["True", "False"],
+  answer: 0,
+  rationale: "Amantadine is second-line therapy for drug-induced parkinsonism."
+},
+{
+  question: "Key feature of Neuroleptic Malignant Syndrome?",
+  options: ["Sweating and tachypnea", "Muscle rigidity and fever", "Mydriasis and diarrhea", "None"],
+  answer: 1,
+  rationale: "NMS presents with lead-pipe rigidity, fever, altered mental status."
+},
+{
+  question: "Which is NOT an SSRI?",
+  options: ["Escitalopram", "Venlafaxine", "Paroxetine", "Fluvoxamine"],
+  answer: 1,
+  rationale: "Venlafaxine is an SNRI."
+},
+{
+  question: "Abilify is the brand name of:",
+  options: ["Risperidone", "Quetiapine", "Aripiprazole", "Ziprasidone"],
+  answer: 2,
+  rationale: "Abilify = Aripiprazole."
+},
+{
+  question: "SSRI with longest half-life?",
+  options: ["Fluoxetine", "Sertraline", "Escitalopram", "Citalopram"],
+  answer: 0,
+  rationale: "Fluoxetine has the longest half-life."
+},
+{
+  question: "Which anxiolytic has lowest abuse potential?",
+  options: ["Diazepam", "Alprazolam", "Buspirone", "Lorazepam"],
+  answer: 2,
+  rationale: "Buspirone is non-habit forming."
+},
+{
+  question: "FDA-approved meds for irritability in autism?",
+  options: ["Risperidone and Aripiprazole", "Haloperidol and Olanzapine", "Quetiapine and Ziprasidone", "Lurasidone and Clozapine"],
+  answer: 0,
+  rationale: "Risperidone and Aripiprazole are FDA-approved."
+},
+{
+  question: "Bupropion should be avoided in patients with:",
+  options: ["Seizure disorder", "Bipolar disorder", "Depression", "Anxiety"],
+  answer: 0,
+  rationale: "Bupropion lowers seizure threshold."
+},
+{
+  question: "Malnourished alcoholic with confusion, gait instability, nystagmus likely has:",
+  options: ["Wernicke encephalopathy", "Korsakoff syndrome", "Alcohol hallucinosis", "Withdrawal"],
+  answer: 0,
+  rationale: "Classic Wernicke's signs."
+},
+{
+  question: "Lithium toxicity is more likely in patients with impaired:",
+  options: ["Liver function", "Renal function", "Cardiac conduction", "Pulmonary function"],
+  answer: 1,
+  rationale: "Lithium is renally cleared."
+}
+];
+    function loadQuiz() {
+      const form = document.getElementById("quiz-form");
+      const shuffled = quizData.sort(() => 0.5 - Math.random());
+      shuffled.forEach((q, i) => {
+        const questionDiv = document.createElement("div");
+        questionDiv.className = "question";
+        questionDiv.innerHTML = `<h3>${i + 1}. ${q.question}</h3>`;
+        const options = q.options.map((opt, idx) =>
+          `<label><input type='radio' name='q${i}' value='${idx}'> ${opt}</label>`
+        ).join('');
+        questionDiv.innerHTML += `<div class='options'>${options}</div>`;
+        form.appendChild(questionDiv);
+      });
+    }
+
+    function submitQuiz() {
+      const form = document.getElementById("quiz-form");
+      const results = document.getElementById("results");
+      results.innerHTML = "";
+      let score = 0;
+      quizData.forEach((q, i) => {
+        const selected = form[`q${i}`].value;
+        const correct = q.answer.toString();
+        const isCorrect = selected === correct;
+        if (isCorrect) score++;
+        const resultHTML = `<p>${i + 1}. ${q.question}<br>
+          <span class='${isCorrect ? "correct" : "incorrect"}'>Your answer: ${q.options[selected] || "No answer"}</span><br>
+          <strong class='correct'>Correct answer: ${q.options[q.answer]}</strong><br>
+          <em>${q.rationale}</em></p>`;
+        results.innerHTML += resultHTML;
+      });
+      const percentage = ((score / quizData.length) * 100).toFixed(2);
+      results.innerHTML = `<h3>You scored ${score}/${quizData.length} (${percentage}%)</h3>` + results.innerHTML;
+    }
+  </script>
+</body>
+</html>
