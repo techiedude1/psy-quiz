@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Psychiatry Quiz - Set C</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #eef4f8;
-      color: #333;
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #e6f0ff, #f9f9f9);
+      color: #2c3e50;
       margin: 0;
       padding: 0 1rem;
     }
@@ -18,43 +18,56 @@
       background: #ffffff;
       border-radius: 12px;
       padding: 2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
     }
     h1, h2 {
       text-align: center;
       color: #1a5276;
     }
     .question {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.8rem;
     }
     .question h3 {
-      color: #2c3e50;
+      color: #154360;
     }
     .options label {
       display: block;
-      padding: 0.3rem;
+      padding: 0.4rem;
+      border-radius: 6px;
+      transition: background-color 0.3s;
       cursor: pointer;
     }
+    .options label:hover {
+      background-color: #d6eaf8;
+    }
     button {
-      background-color: #2980b9;
+      background-color: #3498db;
       color: white;
-      padding: 0.5rem 1rem;
+      padding: 0.7rem 1.5rem;
       border: none;
-      border-radius: 8px;
-      cursor: pointer;
+      border-radius: 10px;
       font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #2980b9;
     }
     .results {
       margin-top: 2rem;
       padding: 1rem;
-      background-color: #dff0f8;
-      border-radius: 8px;
+      background-color: #ecf5fc;
+      border-radius: 10px;
+      font-size: 1.1rem;
     }
     .correct {
       color: green;
+      font-weight: bold;
     }
     .incorrect {
       color: red;
+      font-weight: bold;
     }
     #password-section {
       text-align: center;
@@ -63,12 +76,21 @@
     #quiz-section {
       display: none;
     }
+    input[type="password"] {
+      padding: 0.5rem;
+      margin-top: 1rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
   </style>
 </head>
+
 <body>
   <div id="password-section">
     <h1>Enter Quiz Password</h1>
-    <input type="password" id="quiz-password" placeholder="Enter password" />
+    <input type="password" id="quiz-password" placeholder="Enter password">
+    <br><br>
     <button onclick="checkPassword()">Enter</button>
     <p id="password-error" style="color: red; display: none;">Incorrect password. Please try again.</p>
   </div>
@@ -81,19 +103,19 @@
   </div>
 
 <script>
-  const PASSWORD = "pharm2025";
-  function checkPassword() {
-    const input = document.getElementById("quiz-password").value;
-    if (input === PASSWORD) {
-      document.getElementById("password-section").style.display = "none";
-      document.getElementById("quiz-section").style.display = "block";
-      loadQuiz();
-    } else {
-      document.getElementById("password-error").style.display = "block";
-    }
+const PASSWORD = "pharm2025";
+function checkPassword() {
+  const input = document.getElementById("quiz-password").value;
+  if (input === PASSWORD) {
+    document.getElementById("password-section").style.display = "none";
+    document.getElementById("quiz-section").style.display = "block";
+    loadQuiz();
+  } else {
+    document.getElementById("password-error").style.display = "block";
   }
+}
 
-  const quizData = [
+const quizData = [
 {
   question: "Which anticonvulsant may cause metabolic acidosis through carbonic anhydrase inhibition?",
   options: ["Valproate", "Topamax", "Keppra", "Zonisamide"],
@@ -307,19 +329,41 @@ function submitQuiz() {
   const results = document.getElementById("results");
   results.innerHTML = "";
   let score = 0;
+  let incorrectAnswers = [];
+
   quizData.forEach((q, i) => {
     const selected = form[`q${i}`].value;
     const correct = q.answer.toString();
     const isCorrect = selected === correct;
-    if (isCorrect) score++;
-    const resultHTML = `<p>${i + 1}. ${q.question}<br>
-      <span class='${isCorrect ? "correct" : "incorrect"}'>Your answer: ${q.options[selected] || "No answer"}</span><br>
-      <strong class='correct'>Correct answer: ${q.options[q.answer]}</strong><br>
-      <em>${q.rationale}</em></p>`;
-    results.innerHTML += resultHTML;
+    if (isCorrect) {
+      score++;
+    } else {
+      incorrectAnswers.push({
+        number: i + 1,
+        question: q.question,
+        yourAnswer: q.options[selected] || "No Answer",
+        correctAnswer: q.options[q.answer],
+        rationale: q.rationale
+      });
+    }
   });
+
   const percentage = ((score / quizData.length) * 100).toFixed(2);
-  results.innerHTML = `<h3>You scored ${score}/${quizData.length} (${percentage}%)</h3>` + results.innerHTML;
+  results.innerHTML = `<h3>You scored ${score}/${quizData.length} (${percentage}%)</h3>`;
+
+  if (incorrectAnswers.length > 0) {
+    results.innerHTML += `<h4>Review of Incorrect Answers:</h4>`;
+    incorrectAnswers.forEach(item => {
+      results.innerHTML += `<p>
+        <strong>Question ${item.number}:</strong> ${item.question}<br>
+        <span class="incorrect">Your answer: ${item.yourAnswer}</span><br>
+        <span class="correct">Correct answer: ${item.correctAnswer}</span><br>
+        <em>${item.rationale}</em>
+      </p>`;
+    });
+  } else {
+    results.innerHTML += `<p><strong>Congratulations!</strong> You answered everything correctly!</p>`;
+  }
 }
 </script>
 </body>
